@@ -27,8 +27,9 @@ public class CommandManager {
     private Command saveCommand;
     private Command showCommand;
     private Command updateCommand;
+    private Command exitServerCommand;
 
-    public CommandManager(Command clearCommand, Command executeScriptCommand, Command exitCommand, Command groupCountingByPersonalQualitiesMaximumCommand, Command helpCommand, Command infoCommand, Command insertCommand, Command printDescendingCommand, Command removeAnyByPersonalQualitiesMaximumCommand, Command removeGreaterKeyCommand, Command removeKeyCommand, Command replaceIfGreaterCommand, Command replaceIfLowerCommand, Command saveCommand, Command showCommand, Command updateCommand) {
+    public CommandManager(Command clearCommand, Command executeScriptCommand, Command exitCommand, Command groupCountingByPersonalQualitiesMaximumCommand, Command helpCommand, Command infoCommand, Command insertCommand, Command printDescendingCommand, Command removeAnyByPersonalQualitiesMaximumCommand, Command removeGreaterKeyCommand, Command removeKeyCommand, Command replaceIfGreaterCommand, Command replaceIfLowerCommand, Command saveCommand, Command showCommand, Command updateCommand, Command exitServerCommand) {
         this.clearCommand = clearCommand;
         this.executeScriptCommand = executeScriptCommand;
         this.exitCommand = exitCommand;
@@ -45,6 +46,7 @@ public class CommandManager {
         this.saveCommand = saveCommand;
         this.showCommand = showCommand;
         this.updateCommand = updateCommand;
+        this.exitServerCommand = exitServerCommand;
         commands.add(clearCommand);
         commands.add(executeScriptCommand);
         commands.add(exitCommand);
@@ -59,6 +61,7 @@ public class CommandManager {
         commands.add(saveCommand);
         commands.add(showCommand);
         commands.add(updateCommand);
+        commands.add(exitServerCommand);
 
     }
 
@@ -67,44 +70,48 @@ public class CommandManager {
      * @param arg
      * @return
      */
-    public byte clear(String arg){
-        return clearCommand.exec(arg);
+    public byte clear(String arg, Object object){
+        return clearCommand.exec(arg, object);
     }
     /**
      * Executes ececute_script command.
      * @param arg
      * @return
      */
-    public byte executeScript(String arg){
-        return executeScriptCommand.exec(arg);
+    public byte executeScript(String arg, Object object){
+        return executeScriptCommand.exec(arg, object);
     }
     /**
      * Executes exit command.
      * @param arg
      * @return
      */
-    public byte exit(String arg){
-        return exitCommand.exec(arg);
+    public byte exit(String arg, Object object){
+        return exitCommand.exec(arg, object);
+    }
+
+    public byte exitServer(String arg, Object object){
+        return exitServerCommand.exec(arg, object);
     }
     /**
      * Executes groupCountingByPersonalQualitiesMaximum command.
      * @param arg
      * @return
      */
-    public byte groupCountingByPersonalQualitiesMaximum(String arg){
-        return groupCountingByPersonalQualitiesMaximumCommand.exec(arg);
+    public byte groupCountingByPersonalQualitiesMaximum(String arg, Object object){
+        return groupCountingByPersonalQualitiesMaximumCommand.exec(arg, object);
     }
     /**
      * Executes help command.
      * @param arg
      * @return
      */
-    public byte help(String arg){
-        byte code = helpCommand.exec(arg);
+    public byte help(String arg, Object object){
+        byte code = helpCommand.exec(arg, object);
         if (code == 0){
-            Console.println("Список команд:");
+            ClientOutputBuilder.println("Список команд:");
             for (Command c: commands){
-                Console.println("\t" + c.getName() + "\t" + c.getExplanation());
+                ClientOutputBuilder.println("\t" + c.getName() + "\t" + c.getExplanation());
             }
             return 0;
         }
@@ -117,88 +124,88 @@ public class CommandManager {
      * @param arg
      * @return
      */
-    public byte info(String arg){
-        return infoCommand.exec(arg);
+    public byte info(String arg, Object object){
+        return infoCommand.exec(arg, object);
     }
     /**
      * Executes insert command.
      * @param arg
      * @return
      */
-    public byte insert(String arg){
-        return insertCommand.exec(arg);
+    public byte insert(String arg, Object object){
+        return insertCommand.exec(arg, object);
     }
     /**
      * Executes printDescending command.
      * @param arg
      * @return
      */
-    public byte printDescending(String arg){
-        return printDescendingCommand.exec(arg);
+    public byte printDescending(String arg, Object object){
+        return printDescendingCommand.exec(arg, object);
     }
     /**
      * Executes removeAnyByPersonalQualitiesMaximum command.
      * @param arg
      * @return
      */
-    public byte removeAnyByPersonalQualitiesMaximum(String arg){
-        return removeAnyByPersonalQualitiesMaximumCommand.exec(arg);
+    public byte removeAnyByPersonalQualitiesMaximum(String arg, Object object){
+        return removeAnyByPersonalQualitiesMaximumCommand.exec(arg, object);
     }
     /**
      * Executes removeGreaterKey command.
      * @param arg
      * @return
      */
-    public byte removeGreaterKey(String arg){
-        return removeGreaterKeyCommand.exec(arg);
+    public byte removeGreaterKey(String arg, Object object){
+        return removeGreaterKeyCommand.exec(arg, object);
     }
     /**
      * Executes removeKey command.
      * @param arg
      * @return
      */
-    public byte removeKey(String arg){
-        return removeKeyCommand.exec(arg);
+    public byte removeKey(String arg, Object object){
+        return removeKeyCommand.exec(arg, object);
     }
     /**
      * Executes replaceIfLower command.
      * @param arg
      * @return
      */
-    public byte replaceIfLower(String arg){
-        return replaceIfLowerCommand.exec(arg);
+    public byte replaceIfLower(String arg, Object object){
+        return replaceIfLowerCommand.exec(arg, object);
     }
     /**
      * Executes replaceIfGreater command.
      * @param arg
      * @return
      */
-    public byte replaceIfGreater(String arg){
-        return replaceIfGreaterCommand.exec(arg);
+    public byte replaceIfGreater(String arg, Object object){
+        return replaceIfGreaterCommand.exec(arg, object);
     }
     /**
      * Executes save command.
      * @param arg
      * @return
      */
-    public byte save(String arg){
-        return saveCommand.exec(arg);
+    public byte save(String arg, Object object){
+        return saveCommand.exec(arg, object);
     }
     /**
      * Executes show command.
      * @param arg
      * @return
      */
-    public byte show(String arg){
-        return showCommand.exec(arg);
+    public byte show(String arg, Object object){
+        return showCommand.exec(arg, object);
     }
     /**
      * Executes update command.
      * @param arg
      * @return
      */
-    public byte update(String arg){
-        return updateCommand.exec(arg);
+    public byte update(String arg, Object object){
+        return updateCommand.exec(arg, object);
     }
 
 }

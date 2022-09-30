@@ -4,7 +4,7 @@ import exceptions.EmptyCollectionException;
 import exceptions.LabWorkSearchException;
 import exceptions.WrongElementsCountException;
 import util.CollectionManager;
-import util.Console;
+import util.ClientOutputBuilder;
 
 /**
  * Command which removes all elements with key more than argument.
@@ -25,9 +25,9 @@ public class RemoveGreaterKeyCommand extends AbstractCommand{
      * @return error code, 0 - ok, 1 - standard error (byte)
      */
     @Override
-    public byte exec(String param) {
+    public byte exec(String param, Object object) {
         try {
-            if (param.isEmpty()) {
+            if (param.isEmpty() || object != null) {
                 throw new WrongElementsCountException();
             }
             if (cmanager.getSize() == 0) {
@@ -37,13 +37,13 @@ public class RemoveGreaterKeyCommand extends AbstractCommand{
             cmanager.removeGreater(id);
             return 0;
         } catch (LabWorkSearchException e) {
-            Console.printerr("LabWork с таким id не найден.");
+            ClientOutputBuilder.printerr("LabWork с таким id не найден.");
         } catch (EmptyCollectionException e) {
-            Console.printerr("Коллекция пуста.");
+            ClientOutputBuilder.printerr("Коллекция пуста.");
         } catch (WrongElementsCountException e) {
-            Console.printerr("Нужно использовать команду так: " + getName());
+            ClientOutputBuilder.printerr("Нужно использовать команду так: " + getName());
         } catch (NumberFormatException e){
-            Console.printerr("Было введено не то число!");
+            ClientOutputBuilder.printerr("Было введено не то число!");
         }
         return 1;
     }

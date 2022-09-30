@@ -3,31 +3,21 @@ package commands;
 import exceptions.WrongElementsCountException;
 import util.ClientOutputBuilder;
 
-/**
- * Command which prints all existed commands.
- */
-public class HelpCommand extends AbstractCommand{
-    /**
-     * Each command should be determined only once.
-     */
-    public HelpCommand() {
-        super("help", "вывести справку по доступным командам");
+public class ExitServerCommand extends AbstractCommand{
+
+    public ExitServerCommand(){
+        super("exit_server", "завершить работу сервера (без сохранения в файл)");
     }
 
-    /**
-     * Executes the command.
-     * @param param
-     * @return error code, 0 - ok, 1 - standard error (byte)
-     */
     @Override
     public byte exec(String param, Object object) {
         try {
             if (!param.isEmpty() || object != null) {
                 throw new WrongElementsCountException();
             }
+            ClientOutputBuilder.println("Сервер завершает свою работу.");
             return 0;
-        }
-        catch (WrongElementsCountException e){
+        } catch (WrongElementsCountException e) {
             ClientOutputBuilder.println("Верное использование команды: " + getName() + " " + getExplanation());
             return 1;
         }

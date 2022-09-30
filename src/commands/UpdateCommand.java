@@ -1,15 +1,12 @@
 package commands;
 
-import core.Coordinates;
-import core.Difficulty;
 import core.LabWork;
-import core.Person;
 import exceptions.EmptyCollectionException;
 import exceptions.LabWorkSearchException;
 import exceptions.WrongElementsCountException;
+import messages.MessageLabWork;
 import util.CollectionManager;
-import util.Console;
-import util.LabWorkAsker;
+import util.ClientOutputBuilder;
 
 import java.time.ZonedDateTime;
 
@@ -21,11 +18,10 @@ public class UpdateCommand extends AbstractCommand {
      * Each command should be determined only once.
      */
     private CollectionManager cmanager;
-    private LabWorkAsker asker;
-    public UpdateCommand(CollectionManager c, LabWorkAsker a) {
+    //private LabWorkAsker asker;
+    public UpdateCommand(CollectionManager c) {
         super("update id {element}", "обновить значение элемента коллекции, id которого равен заданному");
         cmanager = c;
-        asker = a;
     }
 
     /**
@@ -35,9 +31,9 @@ public class UpdateCommand extends AbstractCommand {
      * @return error code, 0 - ok, 1 - standard error (byte)
      */
     @Override
-    public byte exec(String param) {
+    public byte exec(String param, Object object) {
         try {
-            if (param.isEmpty()) {
+            if (param.isEmpty() || object == null) {
                 throw new WrongElementsCountException();
             }
             if (cmanager.getSize() == 0) {
@@ -48,44 +44,28 @@ public class UpdateCommand extends AbstractCommand {
             if (l == null) {
                 throw new LabWorkSearchException();
             }
-            String name = l.getName();
-            Coordinates coordinates = l.getCoordinates();
-            ZonedDateTime creationDate = l.getCreationDate();
-            double minimalPoint = l.getMinimalPoint();
-            long personalMaximum = l.getPersonalQualitiesMaximum();
-            Difficulty difficulty = l.getDifficulty();
-            Person author = l.getAuthor();
             cmanager.removeFromCollectionByKey(id);
-            if (asker.askQuestion("Хотите изменить имя?")) {
-                name = asker.askName();
-            }
-            if (asker.askQuestion("Хотите изменить координаты?")) {
-                coordinates = asker.askCoordinates();
-            }
-            if (asker.askQuestion("Хотите изменить минимальную оценку?")) {
-                minimalPoint = asker.askMinimalPoint();
-            }
-            if (asker.askQuestion("Хотите изменить персональный максимум?")) {
-                personalMaximum = asker.askPersonalQualitiesMaximum();
-            }
-            if (asker.askQuestion("Хотите изменить сложность?")) {
-                difficulty = asker.askDifficulty();
-            }
-            if (asker.askQuestion("Хотите изменить автора?")) {
-                author = asker.askAuthor();
-            }
-            LabWork newWork = new LabWork(id, name, coordinates, creationDate, minimalPoint, personalMaximum, difficulty, author);
+            MessageLabWork lw = (MessageLabWork) object;
+            LabWork newWork = new LabWork(
+                    id,
+                    lw.getName(),
+                    lw.getCoordinates(),
+                    ZonedDateTime.now(),
+                    lw.getMinimalPoint(),
+                    lw.getPersonalQualitiesMaximum(),
+                    lw.getDifficulty(),
+                    lw.getAuthor());
             cmanager.addToCollection(newWork, id);
-            Console.println("LabWork изменен.");
+            ClientOutputBuilder.println("LabWork изменен.");
             return 0;
         } catch (LabWorkSearchException e) {
-            Console.printerr("LabWork с таким id не найден.");
+            ClientOutputBuilder.printerr("LabWork с таким id не найден.");
         } catch (EmptyCollectionException e) {
-            Console.printerr("Коллекция пуста.");
+            ClientOutputBuilder.printerr("Коллекция пуста.");
         } catch (WrongElementsCountException e) {
-            Console.printerr("Нужно использовать команду так: " + getName());
+            ClientOutputBuilder.printerr("Нужно использовать команду так: " + getName());
         } catch (NumberFormatException e){
-            Console.printerr("Было введено не то число!");
+            ClientOutputBuilder.printerr("Было введено не то число!");
         }
         return 1;
     }

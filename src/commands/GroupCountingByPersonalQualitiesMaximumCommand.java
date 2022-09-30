@@ -3,8 +3,8 @@ package commands;
 import exceptions.EmptyCollectionException;
 import exceptions.LabWorkSearchException;
 import exceptions.WrongElementsCountException;
+import util.ClientOutputBuilder;
 import util.CollectionManager;
-import util.Console;
 
 /**
  * Command which prints the collection sorted by personalQualitiesMaximum
@@ -25,22 +25,22 @@ public class GroupCountingByPersonalQualitiesMaximumCommand extends AbstractComm
      * @return error code, 0 - ok, 1 - standard error (byte)
      */
     @Override
-    public byte exec(String param) {
+    public byte exec(String param, Object object) {
         try {
-            if (!(param.isEmpty())) {
+            if (!(param.isEmpty()) || object != null) {
                 throw new WrongElementsCountException();
             }
             if (cmanager.getSize() == 0) {
                 throw new EmptyCollectionException();
             }
-            Console.println(cmanager.groupCountingByPersonalQualitiesMaximum());
+            ClientOutputBuilder.println(cmanager.groupCountingByPersonalQualitiesMaximum());
             return 0;
         } catch (LabWorkSearchException e) {
-            Console.printerr("LabWork с таким id не найден.");
+            ClientOutputBuilder.printerr("LabWork с таким id не найден.");
         } catch (EmptyCollectionException e) {
-            Console.printerr("Коллекция пуста.");
+            ClientOutputBuilder.printerr("Коллекция пуста.");
         } catch (WrongElementsCountException e) {
-            Console.printerr("Нужно использовать команду так: " + getName());
+            ClientOutputBuilder.printerr("Нужно использовать команду так: " + getName());
         }
         return 1;
     }

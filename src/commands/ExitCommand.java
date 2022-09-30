@@ -1,7 +1,7 @@
 package commands;
 
 import exceptions.WrongElementsCountException;
-import util.Console;
+import util.ClientOutputBuilder;
 
 /**
  * Command which exits the program no matter what.
@@ -11,7 +11,7 @@ public class ExitCommand extends AbstractCommand{
      * Each command should be determined only once.
      */
     public ExitCommand() {
-        super("exit", "завершить программу (без сохранения в файл)");
+        super("exit", "завершить работу клиента (без сохранения в файл)");
     }
 
     /**
@@ -20,16 +20,15 @@ public class ExitCommand extends AbstractCommand{
      * @return error code, 0 - ok, 1 - standard error (byte)
      */
     @Override
-    public byte exec(String param) {
+    public byte exec(String param, Object object) {
         try {
-            if (!param.isEmpty()) {
+            if (!param.isEmpty() || object != null) {
                 throw new WrongElementsCountException();
             }
-            System.exit(0);
             return 0;
         }
         catch (WrongElementsCountException e){
-            Console.println("Верное использование команды: " + getName() + " " + getExplanation());
+            ClientOutputBuilder.println("Верное использование команды: " + getName() + " " + getExplanation());
             return 1;
         }
     }

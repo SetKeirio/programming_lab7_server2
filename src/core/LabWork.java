@@ -1,16 +1,48 @@
 package core;
 
 import java.time.ZonedDateTime;
-import java.util.Objects;
 
 /**
  * Source main class LabWork.
  */
 public class LabWork implements Comparable<LabWork>{
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     private Integer id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public void setCreationDate(ZonedDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public void setMinimalPoint(double minimalPoint) {
+        this.minimalPoint = minimalPoint;
+    }
+
+    public void setPersonalQualitiesMaximum(long personalQualitiesMaximum) {
+        this.personalQualitiesMaximum = personalQualitiesMaximum;
+    }
+
+    public void setDifficulty(Difficulty difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public void setAuthor(Person author) {
+        this.author = author;
+    }
+
     private String name; //Поле не может быть null, Строка не может быть пустой
     private Coordinates coordinates; //Поле не может быть null
-    private java.time.ZonedDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    private transient java.time.ZonedDateTime creationDate; //Значение этого поля должно генерироваться автоматически
     private double minimalPoint; //Значение поля должно быть больше 0
     private long personalQualitiesMaximum; //Значение поля должно быть больше 0
     private Difficulty difficulty; //Поле не может быть null
@@ -21,6 +53,9 @@ public class LabWork implements Comparable<LabWork>{
         this.name = name;
         this.coordinates = coordinates;
         this.creationDate = creationDate;
+        if (creationDate == null){
+            this.creationDate = ZonedDateTime.now();
+        }
         this.minimalPoint = minimalPoint;
         this.personalQualitiesMaximum = personalQualitiesMaximum;
         this.difficulty = difficulty;
@@ -55,6 +90,10 @@ public class LabWork implements Comparable<LabWork>{
         return difficulty;
     }
 
+    public void refreshCreation(){
+        creationDate = ZonedDateTime.now();
+    }
+
     public Person getAuthor() {
         return author;
     }
@@ -64,7 +103,8 @@ public class LabWork implements Comparable<LabWork>{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LabWork labWork = (LabWork) o;
-        return Double.compare(labWork.minimalPoint, minimalPoint) == 0 && personalQualitiesMaximum == labWork.personalQualitiesMaximum && Objects.equals(id, labWork.id) && Objects.equals(name, labWork.name) && Objects.equals(coordinates, labWork.coordinates) && Objects.equals(creationDate, labWork.creationDate) && difficulty == labWork.difficulty && Objects.equals(author, labWork.author);
+        return Integer.compare(((LabWork) o).getId(), getId()) == 0;
+        //return Double.compare(labWork.minimalPoint, minimalPoint) == 0 && personalQualitiesMaximum == labWork.personalQualitiesMaximum && Objects.equals(id, labWork.id) && Objects.equals(name, labWork.name) && Objects.equals(coordinates, labWork.coordinates) && Objects.equals(creationDate, labWork.creationDate) && difficulty == labWork.difficulty && Objects.equals(author, labWork.author);
     }
 
     @Override

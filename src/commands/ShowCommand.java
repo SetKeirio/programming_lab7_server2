@@ -3,7 +3,7 @@ package commands;
 import exceptions.EmptyCollectionException;
 import exceptions.WrongElementsCountException;
 import util.CollectionManager;
-import util.Console;
+import util.ClientOutputBuilder;
 
 /**
  * Command which prints all elements of the collection.
@@ -24,23 +24,23 @@ public class ShowCommand extends AbstractCommand{
      * @return error code, 0 - ok, 1 - standard error (byte)
      */
     @Override
-    public byte exec(String param) {
+    public byte exec(String param, Object object) {
         try{
-            if (!param.isEmpty()){
+            if (!param.isEmpty() || object != null){
                 throw new WrongElementsCountException();
             }
             if (cmanager.getSize() == 0){
                 throw new EmptyCollectionException();
             }
-            Console.println(cmanager.showAll());
+            ClientOutputBuilder.println(cmanager.showAll());
             return 0;
         }
         catch (WrongElementsCountException e){
-            Console.println("Верное использование команды: " + getName() + " " + getExplanation());
+            ClientOutputBuilder.println("Верное использование команды: " + getName() + " " + getExplanation());
             return 1;
         }
         catch (EmptyCollectionException e){
-            Console.printerr("Коллекция пуста.");
+            ClientOutputBuilder.printerr("Коллекция пуста.");
             return 1;
         }
     }

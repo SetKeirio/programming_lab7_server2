@@ -2,7 +2,7 @@ package commands;
 
 import exceptions.WrongElementsCountException;
 import util.CollectionManager;
-import util.Console;
+import util.ClientOutputBuilder;
 
 import java.time.ZonedDateTime;
 
@@ -25,9 +25,9 @@ public class InfoCommand extends AbstractCommand{
      * @return error code, 0 - ok, 1 - standard error (byte)
      */
     @Override
-    public byte exec(String param) {
+    public byte exec(String param, Object object) {
         try{
-            if (!param.isEmpty()){
+            if (!param.isEmpty() || object != null){
                 throw new WrongElementsCountException();
             }
             String init;
@@ -46,15 +46,15 @@ public class InfoCommand extends AbstractCommand{
             else{
                 init = initConvert.toLocalDate().toString() + " " + initConvert.toLocalTime().toString();
             }
-            Console.println("Коллекция:");
-            Console.println("\tТип: " + cmanager.getType());
-            Console.println("\tДата инициализации: " + init);
-            Console.println("\tДата сохранения: " + save);
-            Console.println("\tКоличество элементов: " + cmanager.getSize());
+            ClientOutputBuilder.println("Коллекция:");
+            ClientOutputBuilder.println("\tТип: " + cmanager.getType());
+            ClientOutputBuilder.println("\tДата инициализации: " + init);
+            ClientOutputBuilder.println("\tДата сохранения: " + save);
+            ClientOutputBuilder.println("\tКоличество элементов: " + cmanager.getSize());
             return 0;
         }
         catch (WrongElementsCountException e){
-            Console.println("Верное использование команды: " + getName() + " " + getExplanation());
+            ClientOutputBuilder.println("Верное использование команды: " + getName() + " " + getExplanation());
             return 1;
         }
     }

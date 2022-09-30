@@ -58,7 +58,7 @@ public class Console {
             while (true) {
                 command = (scanner.nextLine().trim() + " ").split(" ", 2);
                 command[1] = command[1].trim();
-                commandCode = parseAndExecCommand(command);
+                //commandCode = parseAndExecCommand(command);
             }
         }
         catch (NoSuchElementException exception) {
@@ -73,6 +73,7 @@ public class Console {
      * @param command
      * @return
      */
+    /**
     private byte parseAndExecCommand(String[] command){
         switch (command[0]){
             case "clear":
@@ -118,6 +119,8 @@ public class Console {
         };
         return 0;
     }
+     **/
+
 
     /**
      * Works with input in script mode.
@@ -133,7 +136,7 @@ public class Console {
                 throw new NoSuchElementException();
             }
             Scanner sc1 = asker.getScanner();
-            asker.setScanner(sc1);
+            asker.setScanner(sc);
             asker.setFileInput(true);
             do {
                 command = (sc.nextLine().trim() + " ").split(" ",2);
@@ -148,7 +151,7 @@ public class Console {
                         if (command[1].equals(script)) throw new ScriptRecursionException();
                     }
                 }
-                commandCode = parseAndExecCommand(command);
+                //commandCode = parseAndExecCommand(command);
             } while (sc.hasNextLine() && commandCode == (byte) 0);
             asker.setScanner(sc1);
             asker.setFileInput(false);

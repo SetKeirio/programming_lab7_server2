@@ -9,8 +9,9 @@ import java.util.*;
  * Class which works with collection.
  * Includes methods for all commands which work with collection.
  */
+// for (LabWork x: new CollectionManager())
 public class CollectionManager {
-    private FileManager fileManager;
+    private CollectionKeeper fileManager;
     private Map<Integer, LabWork> collection = new HashMap<>();
 
     public ZonedDateTime getCreationTime() {
@@ -25,8 +26,10 @@ public class CollectionManager {
 
     private ZonedDateTime saveTime;
 
-    public CollectionManager(FileManager fm){
+    public CollectionManager(CollectionKeeper fm){
         fileManager = fm;
+        creationTime = null;
+        saveTime = null;
         loadCollection();
     }
 
@@ -58,7 +61,7 @@ public class CollectionManager {
      * Returns string with all elements in collection.
      * @return answer
      */
-    public String showAll(){
+    /**public String showAll(){
         String answer = "";
         if (getSize() == 0){
             return "Коллекция пока пуста.";
@@ -72,8 +75,34 @@ public class CollectionManager {
         }
         return answer;
     }
+     **/
+    public String showAll(){
+        if (getSize() == 0){
+            return "Коллекция пока пуста.";
+        }
+        else{
+            Comparator<Map.Entry<Integer,LabWork>> comparator = new Comparator<Map.Entry<Integer,LabWork>>(){
+                @Override
+                public int compare(Map.Entry<Integer,LabWork> o1, Map.Entry<Integer,LabWork> o2) {
+                    long d1 = (long) o1.getValue().getCoordinates().getX() * (long) o1.getValue().getCoordinates().getX() + (long) o1.getValue().getCoordinates().getY() * (long) o1.getValue().getCoordinates().getY();
+                    long d2 = (long) o2.getValue().getCoordinates().getX() * (long) o2.getValue().getCoordinates().getX() + (long) o2.getValue().getCoordinates().getY() * (long) o2.getValue().getCoordinates().getY();
+                    if (d1 - d2 > 0){
+                        return 1;
+                    }
+                    else if (d1 - d2 < 0){
+                        return -1;
+                    }
+                    else{
+                        return 0;
+                    }
+                }
+            };
+            return "Коллекция, отсортированная по увеличению модуля местоположения:\n" + collection.entrySet().stream().sorted(comparator).reduce("", (a, b) -> a += "Key " + b + ": \n", (a1, b1) -> a1 + b1).trim();
+            //return collection.keySet().stream().reduce("", (a, b) -> a += "Key " + b + ": \n", (a1, b1) -> a1 + b1).trim();
+        }
+    }
 
-        public void clear(){
+    public void clear(){
         collection.clear();
     }
 
@@ -91,7 +120,7 @@ public class CollectionManager {
      * @param id
      * @return answer
      */
-    public LabWork getById(Integer id){
+    /**public LabWork getById(Integer id){
         Iterator it = collection.values().iterator();
         while (it.hasNext()){
             LabWork temp = (LabWork) it.next();
@@ -100,6 +129,10 @@ public class CollectionManager {
             }
         }
         return null;
+    }**/
+
+    public LabWork getById(Integer id){
+        return collection.values().stream().filter(a -> a.getId().equals(id)).findFirst().orElse(null);
     }
 
     /**
@@ -107,7 +140,7 @@ public class CollectionManager {
      * @param key
      * @return answer
      */
-    public LabWork getByKey(Integer key){
+    /**public LabWork getByKey(Integer key){
         Iterator it = collection.keySet().iterator();
         while (it.hasNext()){
             Integer temp = (Integer) it.next();
@@ -116,6 +149,10 @@ public class CollectionManager {
             }
         }
         return null;
+    }**/
+    public LabWork getByKey(Integer key){
+        Integer i = collection.keySet().stream().filter(a -> a.equals(key)).findFirst().orElse(-1);
+        return collection.values().stream().filter(a -> a.getId().equals(i)).findFirst().orElse(null);
     }
 
     /**
@@ -142,9 +179,10 @@ public class CollectionManager {
      * @param key
      */
     public void replaceIfGreater(LabWork lw, Integer key){
-        if (lw.compareTo(collection.get(key)) > 0){
+        if (collection.values().stream().filter(a -> a.getId().equals(key)).findFirst().orElse(null).compareTo(lw) > 0){
             updateById(lw, key);
         }
+
     }
 
     /**
@@ -153,7 +191,7 @@ public class CollectionManager {
      * @param key
      */
     public void replaceIfLower(LabWork lw, Integer key){
-        if (lw.compareTo(collection.get(key)) < 0){
+        if (collection.values().stream().filter(a -> a.getId().equals(key)).findFirst().orElse(null).compareTo(lw) < 0){
             updateById(lw, key);
         }
     }
@@ -163,7 +201,7 @@ public class CollectionManager {
      * @return
      */
     public String printDescending(){
-        String answer = "";
+        /**String answer = "";
         TreeMap<LabWork, Integer> temp = new TreeMap<>();
         Iterator it = collection.keySet().iterator();
         while (it.hasNext()){
@@ -173,39 +211,50 @@ public class CollectionManager {
         it = temp.keySet().iterator();
         while (it.hasNext()){
             LabWork k = (LabWork) it.next();
-            answer += k + "\n";
-        }
-        return answer;
+            answer = k + "\n" + answer;
+        }**/
+        return collection.values().stream().sorted().reduce("", (a, b) -> a += b + "\n", (a1, b1) -> b1 + a1);
+        //return answer;
     }
 
     /**
      * Removes all elements greater than argument.
      * @param key
-     */
+     **/
     public void removeGreater(Integer key){
-        Iterator it = collection.keySet().iterator();
+        /**Iterator it = collection.keySet().iterator();
         while (it.hasNext()){
             int k = (int) it.next();
             if (k > key){
                 removeFromCollectionByKey(k);
             }
-        }
+        }*/
+        collection.keySet().stream().filter(a -> a > key).forEach(a -> removeFromCollectionByKey(a));
     }
 
     /**
      * Removes first elements with personal qualities equals to argument.
      * @param maximum
      */
-    public void removeAnyByPersonalQualitiesMaximum(long maximum){
-        Iterator it = collection.keySet().iterator();
+    public byte removeAnyByPersonalQualitiesMaximum(long maximum){
+        /**Iterator it = collection.keySet().iterator();
         boolean stop = true;
         while (it.hasNext() && stop){
             int k = (int) it.next();
             if (collection.get(k).getPersonalQualitiesMaximum() ==  maximum){
-                Console.println("Удалено одного LabWork произведено (id = " + collection.get(k).getId() + ")");
+                ClientOutputBuilder.println("Удалено одного LabWork произведено (id = " + collection.get(k).getId() + ")");
                 removeFromCollectionByKey(k);
                 stop = false;
+                return 0;
             }
+        }**/
+        if (collection.values().stream().filter(a -> a.getPersonalQualitiesMaximum() == maximum).count() >= 1) {
+            collection.values().stream().filter(a -> a.getPersonalQualitiesMaximum() == maximum).limit(1).peek(a -> removeFromCollectionByKey(a.getId())).peek(a -> ClientOutputBuilder.println("Удалено одного LabWork произведено (id = " + a.getId() + ")"));
+            return 0;
+        }
+        else{
+            ClientOutputBuilder.printerr("LabWork с таким id не найден");
+            return 1;
         }
     }
 
@@ -230,12 +279,8 @@ public class CollectionManager {
             }
         };
         TreeMap<LabWork, Integer> temp = new TreeMap<>(comparator);
-        Iterator it = collection.keySet().iterator();
-        while (it.hasNext()){
-            int key= (int) it.next();
-            temp.put(collection.get(key), key);
-        }
-        it = temp.keySet().iterator();
+        collection.keySet().stream().peek(a -> temp.put(collection.get(a), a));
+        Iterator it = temp.keySet().iterator();
         long nowmax = 0;
         boolean start = true;
         int count = 0;
@@ -268,20 +313,23 @@ public class CollectionManager {
             return 1;
         }
         else{
-            Iterator it = collection.keySet().iterator();
-            int max = 0;
+            Integer answer = (collection.keySet().stream().max(new Comparator<Integer>() {
+                @Override
+                public int compare(Integer o1, Integer o2) {
+                    return o1 - o2;
+                }
+            }).get() + 1);
+            return answer >= 1 ? answer + 1 : 1;
+            /**Iterator it = collection.keySet().iterator();
+            int max = 1;
             while (it.hasNext()){
                 LabWork k = collection.get(it.next());
                 if (k.getId() > max){
                     max = k.getId();
                 }
             }
-            return max;
+            return (max + 1);**/
+
         }
     }
-
-
-
-
-
 }

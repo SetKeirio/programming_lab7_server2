@@ -1,7 +1,7 @@
 package commands;
 
 import exceptions.WrongElementsCountException;
-import util.Console;
+import util.ClientOutputBuilder;
 
 /**
  * Command which executes script from some file.
@@ -20,13 +20,13 @@ public class ExecuteScriptCommand extends AbstractCommand{
      * @return error code, 0 - ok, 1 - standard error (byte)
      */
     @Override
-    public byte exec(String param) {
+    public byte exec(String param, Object object) {
         try {
-            if (param.isEmpty()) throw new WrongElementsCountException();
-            Console.println("Выполняю скрипт '" + param + "'...");
+            if (param.isEmpty() || object != null) throw new WrongElementsCountException();
+            ClientOutputBuilder.println("Выполняю скрипт '" + param + "'...");
             return 0;
         } catch (WrongElementsCountException exception) {
-            Console.println("Использование: '" + getName() + "'");
+            ClientOutputBuilder.println("Использование: '" + getName() + "'");
         }
         return 1;
 }

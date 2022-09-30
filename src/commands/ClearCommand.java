@@ -1,8 +1,8 @@
 package commands;
 
 import exceptions.WrongElementsCountException;
+import util.ClientOutputBuilder;
 import util.CollectionManager;
-import util.Console;
 
 
 /**
@@ -25,17 +25,17 @@ public class ClearCommand extends AbstractCommand{
      * @return error code, 0 - ok, 1 - WrongElementsCountException error (byte)
      */
     @Override
-    public byte exec(String param) {
+    public byte exec(String param, Object object) {
         try{
-            if (!(param.isEmpty())){
+            if (!(param.isEmpty()) || object != null){
                 throw new WrongElementsCountException();
             }
             cmanager.clear();
-            Console.println("Коллекция теперь очищена.");
+            ClientOutputBuilder.println("Коллекция теперь очищена.");
             return 0;
         }
         catch (WrongElementsCountException e){
-            Console.println("Верное использование команды: " + getName() + " " + getExplanation());
+            ClientOutputBuilder.println("Верное использование команды: " + getName() + " " + getExplanation());
             return 1;
         }
     }

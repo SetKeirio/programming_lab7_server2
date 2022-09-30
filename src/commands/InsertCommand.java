@@ -3,9 +3,9 @@ package commands;
 import core.LabWork;
 import exceptions.ScriptWrongInputException;
 import exceptions.WrongElementsCountException;
+import messages.MessageLabWork;
 import util.CollectionManager;
-import util.Console;
-import util.LabWorkAsker;
+import util.ClientOutputBuilder;
 
 import java.time.ZonedDateTime;
 
@@ -16,12 +16,11 @@ public class InsertCommand extends AbstractCommand {
     /**
      * Each command should be determined only once.
      */
-    private LabWorkAsker asker;
+    //private LabWorkAsker asker;
     private CollectionManager cmanager;
-    public InsertCommand(CollectionManager c, LabWorkAsker a) {
+    public InsertCommand(CollectionManager c) {
         super("insert {element}", "добавить новый элемент с заданным ключом");
         cmanager = c;
-        asker = a;
     }
 
     /**
@@ -31,26 +30,27 @@ public class InsertCommand extends AbstractCommand {
      * @return error code, 0 - ok, 1 - standard error (byte)
      */
     @Override
-    public byte exec(String param) {
+    public byte exec(String param, Object object) {
         try {
-            if (!param.isEmpty()){
+            if (!param.isEmpty() || object == null){
                 throw new WrongElementsCountException();
             }
+            MessageLabWork lw = (MessageLabWork) object;
             Integer id = cmanager.generateNextId();
             cmanager.addToCollection(new LabWork(
                     id,
-                    asker.askName(),
-                    asker.askCoordinates(),
+                    lw.getName(),
+                    lw.getCoordinates(),
                     ZonedDateTime.now(),
-                    asker.askMinimalPoint(),
-                    asker.askPersonalQualitiesMaximum(),
-                    asker.askDifficulty(),
-                    asker.askAuthor()
+                    lw.getMinimalPoint(),
+                    lw.getPersonalQualitiesMaximum(),
+                    lw.getDifficulty(),
+                    lw.getAuthor()
             ), id);
-            Console.println("LabWork добавлена.");
+            ClientOutputBuilder.println("LabWork добавлена.");
             return (byte) 0;
         } catch (WrongElementsCountException exception) {
-            Console.println("Использование: '" + getName() + "'");
+            ClientOutputBuilder.println("Использование: '" + getName() + "'");
         } catch (ScriptWrongInputException exception) {}
         return (byte) 1;
     }
