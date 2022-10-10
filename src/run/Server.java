@@ -1,39 +1,117 @@
 package run;
 
-import messages.CommandMessage;
-import messages.CommandResponse;
-import util.ClientOutputBuilder;
-import util.CollectionManager;
+import exceptions.ConnectionTroublesException;
+import util.CommandManager;
 import util.Console;
-import util.RequestHandler;
 
-import java.io.*;
-import java.net.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.DatagramChannel;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 public class Server {
     private int port;
-    private int soTimeout;
-    private DatagramSocket ds;
-    private DatagramPacket dp;
     private InetAddress host;
-    private RequestHandler handler;
-    private SocketAddress address;
-    private DatagramChannel channel;
-    private ByteBuffer buffer;
+    //private DatagramSocket ds;
+    private DatagramPacket dp;
+    //private SocketAddress address;
+    //private DatagramChannel channel;
+    //private ByteBuffer buffer;
     private final int standartLength = 16384;
-    private CollectionManager colmanager;
+    private CommandManager commanager;
+    private Semaphore semaphore;
+    private DatagramSocket ds;
+    private boolean isWorking;
+    private ExecutorService pool = Executors.newCachedThreadPool();
 
 
-    public Server(int port, int time, RequestHandler handler, CollectionManager colmanager){
+    public Server(int port, CommandManager commanager){
         this.port = port;
-        soTimeout = time;
-        this.handler = handler;
-        this.colmanager = colmanager;
+        this.commanager = commanager;
+        semaphore = new Semaphore(50);
+    }
+
+    private synchronized boolean isWorking(){
+        return isWorking;
+    }
+
+    public synchronized void stop(){
+        isWorking = false;
+        pool.shutdown();
+        Console.println("Сервер завершает работу с клиентами!");
+    }
+
+    public void allow(){
+        try{
+            semaphore.acquire();
+            Console.println("Соединение разрешено!");
+        } catch (InterruptedException e) {
+            Console.printerr("Ошибка при получении разрешения!");
+        }
+    }
+
+    public void release(){
+        semaphore.release();
+        Console.println("Соединение разорвано!");
+    }
+
+    private void openServer() throws SocketException{
+        try{
+            ds = new DatagramSocket(port);
+            ds.setSoTimeout(10000);
+            isWorking = true;
+            Console.println("Сервер запущен!");
+        } catch (SocketException e) {
+            Console.printerr("Сервер не может быть запущен!");
+            throw new SocketException();
+        }
+    }
+
+    private void recieve(){
+        try{
+            Console.println("Слушаю порт: " + port);
+            byte[] bytes = new byte[standartLength];
+            dp = new DatagramPacket(bytes, bytes.length);
+            ds.receive(dp);
+        } catch (IOException e) {
+            Console.printerr("Произошла ошибка во время получения датаграммы!");
+        }
     }
 
     public void start(){
+        try{
+            openServer();
+            while (isWorking){
+                try{
+                    allow();
+                    if (!isWorking){
+                        throw new ConnectionTroublesException();
+                    }
+                    recieve();
+                    //pool.submit(new );
+                } catch (ConnectionTroublesException e) {
+                    if (isWorking){
+                        Console.printerr("Невозможно соединиться с клиентом!");
+                    }
+                    else{
+                        break;
+                    }
+                }
+            }
+            pool.awaitTermination(30000, TimeUnit.MILLISECONDS);
+            Console.println("Сервер завершает свою работу!");
+        } catch (SocketException | InterruptedException e) {
+            Console.printerr("Произошла ошибка при завершении работы!");
+        }
+
+    }
+
+    /**public void start(){
         try{
             ds = new DatagramSocket(port);
             channel = DatagramChannel.open();
@@ -89,5 +167,5 @@ public class Server {
         catch (Exception e){
             e.printStackTrace();
         }
-    }
+    }**/
 }

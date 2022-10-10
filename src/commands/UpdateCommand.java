@@ -3,10 +3,13 @@ package commands;
 import core.LabWork;
 import exceptions.EmptyCollectionException;
 import exceptions.LabWorkSearchException;
+import exceptions.NoPermissionsException;
 import exceptions.WrongElementsCountException;
 import messages.MessageLabWork;
+import messages.User;
 import util.CollectionManager;
 import util.ClientOutputBuilder;
+import util.DatabaseChanger;
 
 import java.time.ZonedDateTime;
 
@@ -18,10 +21,12 @@ public class UpdateCommand extends AbstractCommand {
      * Each command should be determined only once.
      */
     private CollectionManager cmanager;
+    private DatabaseChanger changer;
     //private LabWorkAsker asker;
-    public UpdateCommand(CollectionManager c) {
+    public UpdateCommand(CollectionManager c, DatabaseChanger changer) {
         super("update id {element}", "обновить значение элемента коллекции, id которого равен заданному");
         cmanager = c;
+        this.changer = changer;
     }
 
     /**
@@ -31,7 +36,7 @@ public class UpdateCommand extends AbstractCommand {
      * @return error code, 0 - ok, 1 - standard error (byte)
      */
     @Override
-    public byte exec(String param, Object object) {
+    public byte exec(String param, Object object, User user) {
         try {
             if (param.isEmpty() || object == null) {
                 throw new WrongElementsCountException();
@@ -44,8 +49,12 @@ public class UpdateCommand extends AbstractCommand {
             if (l == null) {
                 throw new LabWorkSearchException();
             }
+            if (!l.getCreator().equals(user)){
+                throw new NoPermissionsException();
+            }
             cmanager.removeFromCollectionByKey(id);
             MessageLabWork lw = (MessageLabWork) object;
+            changer.updateLabWorkById(id, lw);
             LabWork newWork = new LabWork(
                     id,
                     lw.getName(),
@@ -54,7 +63,8 @@ public class UpdateCommand extends AbstractCommand {
                     lw.getMinimalPoint(),
                     lw.getPersonalQualitiesMaximum(),
                     lw.getDifficulty(),
-                    lw.getAuthor());
+                    lw.getAuthor(),
+                    user);
             cmanager.addToCollection(newWork, id);
             ClientOutputBuilder.println("LabWork изменен.");
             return 0;

@@ -1,5 +1,7 @@
 package core;
 
+import messages.User;
+
 import java.time.ZonedDateTime;
 
 /**
@@ -48,7 +50,13 @@ public class LabWork implements Comparable<LabWork>{
     private Difficulty difficulty; //Поле не может быть null
     private Person author; //Поле может быть null
 
-    public LabWork(Integer id, String name, Coordinates coordinates, ZonedDateTime creationDate, double minimalPoint, long personalQualitiesMaximum, Difficulty difficulty, Person author) {
+    public User getCreator() {
+        return creator;
+    }
+
+    private User creator;
+
+    public LabWork(Integer id, String name, Coordinates coordinates, ZonedDateTime creationDate, double minimalPoint, long personalQualitiesMaximum, Difficulty difficulty, Person author, User user) {
         this.id = id;
         this.name = name;
         this.coordinates = coordinates;
@@ -60,6 +68,7 @@ public class LabWork implements Comparable<LabWork>{
         this.personalQualitiesMaximum = personalQualitiesMaximum;
         this.difficulty = difficulty;
         this.author = author;
+        this.creator = user;
     }
 
     public Integer getId() {

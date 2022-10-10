@@ -1,6 +1,7 @@
 package commands;
 
 import exceptions.WrongElementsCountException;
+import messages.User;
 import util.ClientOutputBuilder;
 
 public class ExitServerCommand extends AbstractCommand{
@@ -10,7 +11,7 @@ public class ExitServerCommand extends AbstractCommand{
     }
 
     @Override
-    public byte exec(String param, Object object) {
+    public byte exec(String param, Object object, User user) {
         try {
             if (!param.isEmpty() || object != null) {
                 throw new WrongElementsCountException();

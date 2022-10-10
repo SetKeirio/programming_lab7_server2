@@ -10,8 +10,9 @@ import java.util.*;
  * Includes methods for all commands which work with collection.
  */
 // for (LabWork x: new CollectionManager())
+    // убрать saveCollection в другой класс
 public class CollectionManager {
-    private CollectionKeeper fileManager;
+    private DatabaseChanger fileManager;
     private Map<Integer, LabWork> collection = new HashMap<>();
 
     public ZonedDateTime getCreationTime() {
@@ -26,28 +27,38 @@ public class CollectionManager {
 
     private ZonedDateTime saveTime;
 
-    public CollectionManager(CollectionKeeper fm){
+    public CollectionManager(DatabaseChanger fm){
         fileManager = fm;
         creationTime = null;
         saveTime = null;
         loadCollection();
     }
 
+    public Map<Integer, LabWork> getCollection() {
+        return collection;
+    }
+
     /**
      * Loads the collection from file.
      */
     public void loadCollection(){
-        collection = fileManager.readCollection();
+        collection = fileManager.getCollection();
         creationTime = ZonedDateTime.now();
+        if (collection.size() == 0){
+            Console.printerr("Загружена пустая коллекция");
+        }
+        else {
+            Console.println("Коллекция загружена");
+        }
     }
 
     /**
      * Saves the collection into file.
      */
-    public void saveCollection(){
+    /**public void saveCollection(){
         fileManager.writeCollection(collection);
         saveTime = ZonedDateTime.now();
-    }
+    }**/
 
     public String getType(){
         return collection.getClass().getName();

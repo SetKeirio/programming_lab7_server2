@@ -1,11 +1,13 @@
 package util;
 
-import core.*;
+import core.Color;
+import core.Coordinates;
+import core.Difficulty;
+import core.Person;
 import exceptions.CantBeNullException;
 import exceptions.LimitIgnoreException;
 import exceptions.ScriptWrongInputException;
 
-import java.time.ZonedDateTime;
 import java.util.*;
 
 /**
@@ -61,7 +63,7 @@ public class LabWorkAsker {
      * @return
      * @throws ScriptWrongInputException
      */
-    public LabWork checkElement(LabWork l) {
+    /**public LabWork checkElement(LabWork l) {
         LabWork answer;
         String name = l.getName();
         int id = l.getId();
@@ -137,12 +139,12 @@ public class LabWorkAsker {
             a = new Person(aName, date, weight, passid, col);
 
         }
-        answer = new LabWork(id, name, c, d, min,personal, difficulty, a);
-        return answer;
+        //answer = new LabWork(id, name, c, d, min,personal, difficulty, a);
+        return answer;**/
 
 
 
-    }
+    //}
     /**
      * Asks to input name.
      * @return

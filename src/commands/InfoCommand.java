@@ -1,6 +1,7 @@
 package commands;
 
 import exceptions.WrongElementsCountException;
+import messages.User;
 import util.CollectionManager;
 import util.ClientOutputBuilder;
 
@@ -25,7 +26,7 @@ public class InfoCommand extends AbstractCommand{
      * @return error code, 0 - ok, 1 - standard error (byte)
      */
     @Override
-    public byte exec(String param, Object object) {
+    public byte exec(String param, Object object, User user) {
         try{
             if (!param.isEmpty() || object != null){
                 throw new WrongElementsCountException();

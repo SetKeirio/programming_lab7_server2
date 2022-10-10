@@ -3,6 +3,7 @@ package commands;
 import exceptions.EmptyCollectionException;
 import exceptions.LabWorkSearchException;
 import exceptions.WrongElementsCountException;
+import messages.User;
 import util.ClientOutputBuilder;
 import util.CollectionManager;
 
@@ -25,7 +26,7 @@ public class GroupCountingByPersonalQualitiesMaximumCommand extends AbstractComm
      * @return error code, 0 - ok, 1 - standard error (byte)
      */
     @Override
-    public byte exec(String param, Object object) {
+    public byte exec(String param, Object object, User user) {
         try {
             if (!(param.isEmpty()) || object != null) {
                 throw new WrongElementsCountException();

@@ -3,8 +3,10 @@ package commands;
 import exceptions.EmptyCollectionException;
 import exceptions.LabWorkSearchException;
 import exceptions.WrongElementsCountException;
+import messages.User;
 import util.CollectionManager;
 import util.ClientOutputBuilder;
+import util.DatabaseChanger;
 
 /**
  * Command which removes first element with personalMaximum equals to argument.
@@ -14,9 +16,11 @@ public class RemoveAnyByPersonalQualitiesMaximumCommand extends AbstractCommand{
      * Each command should be determined only once.
      */
     CollectionManager cmanager;
-    public RemoveAnyByPersonalQualitiesMaximumCommand(CollectionManager c) {
+    private DatabaseChanger changer;
+    public RemoveAnyByPersonalQualitiesMaximumCommand(CollectionManager c, DatabaseChanger changer) {
         super("remove_any_by_personal_qualities_maximum personalQualitiesMaximum", "удалить из коллекции один элемент, значение поля personalQualitiesMaximum которого эквивалентно заданному");
         cmanager = c;
+        this.changer = changer;
     }
 
     /**
@@ -25,7 +29,7 @@ public class RemoveAnyByPersonalQualitiesMaximumCommand extends AbstractCommand{
      * @return error code, 0 - ok, 1 - standard error (byte)
      */
     @Override
-    public byte exec(String param, Object object) {
+    public byte exec(String param, Object object, User user) {
         try {
             if (param.isEmpty() || object != null) {
                 throw new WrongElementsCountException();

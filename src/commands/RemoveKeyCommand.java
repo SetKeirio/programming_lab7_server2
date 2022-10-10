@@ -4,19 +4,24 @@ import core.LabWork;
 import exceptions.EmptyCollectionException;
 import exceptions.LabWorkSearchException;
 import exceptions.WrongElementsCountException;
+import messages.User;
 import util.CollectionManager;
 import util.ClientOutputBuilder;
+import util.DatabaseChanger;
 
 /**
  * Command which removes element from the collection by key.
  */
 public class RemoveKeyCommand extends AbstractCommand {
     private CollectionManager cmanager;
+    private DatabaseChanger changer;
     /**
      * Each command should be determined only once.
      */
-    public RemoveKeyCommand(CollectionManager c) {
+    public RemoveKeyCommand(CollectionManager c, DatabaseChanger changer) {
         super("remove_key {element}", "удалить элемент по ключу");
+        cmanager = c;
+        this.changer = changer;
     }
 
     /**
@@ -26,7 +31,7 @@ public class RemoveKeyCommand extends AbstractCommand {
      * @return error code, 0 - ok, 1 - standard error (byte)
      */
     @Override
-    public byte exec(String param, Object object) {
+    public byte exec(String param, Object object, User user) {
         try {
             if (param.isEmpty() || object != null){
                 throw new WrongElementsCountException();

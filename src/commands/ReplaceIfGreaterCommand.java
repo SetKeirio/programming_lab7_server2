@@ -8,8 +8,10 @@ import exceptions.EmptyCollectionException;
 import exceptions.LabWorkSearchException;
 import exceptions.WrongElementsCountException;
 import messages.MessageLabWork;
+import messages.User;
 import util.CollectionManager;
 import util.ClientOutputBuilder;
+import util.DatabaseChanger;
 
 import java.time.ZonedDateTime;
 
@@ -21,10 +23,12 @@ public class ReplaceIfGreaterCommand extends AbstractCommand{
      * Each command should be determined only once.
      */
     private CollectionManager cmanager;
+    private DatabaseChanger changer;
     //private LabWorkAsker asker;
-    public ReplaceIfGreaterCommand(CollectionManager c) {
+    public ReplaceIfGreaterCommand(CollectionManager c, DatabaseChanger changer) {
         super("replace_if_greater null {element}", "заменить значение по ключу, если новое значение больше старого");
         cmanager = c;
+        this.changer = changer;
     }
 
     /**
@@ -33,7 +37,7 @@ public class ReplaceIfGreaterCommand extends AbstractCommand{
      * @return error code, 0 - ok, 1 - standard error (byte)
      */
     @Override
-    public byte exec(String param, Object object) {
+    public byte exec(String param, Object object, User user) {
         try {
             if (param.isEmpty() || object == null) {
                 throw new WrongElementsCountException();
@@ -62,7 +66,8 @@ public class ReplaceIfGreaterCommand extends AbstractCommand{
                     lw.getMinimalPoint(),
                     lw.getPersonalQualitiesMaximum(),
                     lw.getDifficulty(),
-                    lw.getAuthor());
+                    lw.getAuthor(),
+                    user);
             if (newWork.compareTo(l) > 0) {
                 cmanager.removeFromCollectionByKey(id);
                 cmanager.addToCollection(newWork, id);
